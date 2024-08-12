@@ -64,7 +64,11 @@ app.post('/login', (req, res) => {
     });
 });
 
+// // Start the server
+// app.listen(8000, () => {
+//     console.log('Server running on port 8000');
+// });
 // Start the server
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+const server = app.listen(8000, () => {
+    console.log(`Server running on port ${server.address().port}`);
 });
