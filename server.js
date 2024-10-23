@@ -41,6 +41,7 @@ app.post('/signup', async (req, res) => {
 });
 
 // Login route
+// Login route
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
     const query = 'SELECT * FROM users WHERE email = ?';
@@ -54,15 +55,22 @@ app.post('/login', (req, res) => {
         const match = await bcrypt.compare(password, user.password);
 
         if (match) {
-            req.session.user = { id: user.user_id, role: user.role };
-            return res.send(user.role);
+            // Store user's ID, role, and first name in the session
+            req.session.user = { 
+                id: user.user_id, 
+                role: user.role, 
+                first_name: user.first_name 
+            };
+            return res.send(user.role); // Redirects based on role
         } else {
             res.status(401).send('Invalid credentials.');
         }
     });
 });
 
+
 // Dashboard routes
+// Admin dashboard route (serving the HTML file)
 app.get('/admin-dashboard', (req, res) => {
     if (req.session.user?.role === 'admin') {
         res.sendFile(path.join(__dirname, 'public/admin-dashboard.html'));
@@ -70,6 +78,16 @@ app.get('/admin-dashboard', (req, res) => {
         res.status(403).send('Access denied.');
     }
 });
+
+// Route to send the user's first name to the frontend
+app.get('/admin/user-info', (req, res) => {
+    if (req.session.user) {
+        res.json({ first_name: req.session.user.first_name });
+    } else {
+        res.status(401).send('Not logged in');
+    }
+});
+
 
 app.get('/staff-dashboard', (req, res) => {
     if (req.session.user?.role === 'staff') {
