@@ -18,10 +18,16 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <button type="submit">Login</button>
+            <button id="redirectButton" type="button">Sign Up</button>
         </form>
     </div>
 
     <script>
+        document.getElementById('redirectButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/signup.html';
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
