@@ -62,6 +62,16 @@ app.post('/login', (req, res) => {
     });
 });
 
+// Logout route
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Error logging out.');
+        }
+        res.redirect('/login.html'); // Redirect to the login page after logging out
+    });
+});
+
 // Dashboard routes
 app.get('/admin-dashboard', (req, res) => {
     if (req.session.user?.role === 'admin') {
