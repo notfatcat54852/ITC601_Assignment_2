@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin/Staff Dashboard</title>
+</head>
+
+<body>
+    <h1>User Management</h1>
+    <form id="createUserForm">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="client">Client</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit">Create User</button>
+    </form>
+
+    <button id="logoutButton">Logout</button>
+
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            try {
+                const response = await fetch('/create-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name, last_name, email, password, role })
+                });
+
+                const result = await response.text();
+                alert(result);
+            } catch (error) {
+                alert('Error creating user');
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                alert(await response.text());
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

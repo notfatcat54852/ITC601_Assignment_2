@@ -1,75 +1,97 @@
 const express = require('express');
+const session = require('express-session');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
-const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-app.use(bodyParser.json());
 
-// Serve static files
+// Middleware setup
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 
-// Create a MySQL connection
-const connection = mysql.createConnection({
+// MySQL connection setup
+const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'login_system'
+    database: 'projectmgmt'
 });
 
-connection.connect(err => {
+db.connect(err => {
     if (err) throw err;
-    console.log('Connected to MySQL!');
+    console.log('Connected to MySQL database.');
 });
 
-// Register endpoint
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).send('Username and password are required');
-    }
-
+// Signup route (for client role only)
+app.post('/signup', async (req, res) => {
+    const { first_name, last_name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const query = 'INSERT INTO users (username, password) VALUES (?, ?)';
-    connection.query(query, [username, hashedPassword], (err, results) => {
-        if (err) return res.status(500).send('Error registering user');
-        res.status(201).send('User registered');
+    const query = `INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, 'client')`;
+    db.query(query, [first_name, last_name, email, hashedPassword], (err) => {
+        if (err) return res.status(500).send('Error creating account.');
+        res.status(201).send('Signup successful!');
     });
 });
 
-// Login endpoint
+// Login route
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
+    const query = 'SELECT * FROM users WHERE email = ?';
 
-    if (!username || !password) {
-        return res.status(400).send('Username and password are required');
-    }
+    db.query(query, [email], async (err, results) => {
+        if (err) return res.status(500).send('Login error.');
 
-    const query = 'SELECT password FROM users WHERE username = ?';
-    connection.query(query, [username], async (err, results) => {
-        if (err) return res.status(500).send('Error logging in');
-        if (results.length === 0) return res.status(401).send('Invalid credentials');
+        if (results.length === 0) return res.status(401).send('Invalid credentials.');
 
-        const hashedPassword = results[0].password;
-        const match = await bcrypt.compare(password, hashedPassword);
+        const user = results[0];
+        const match = await bcrypt.compare(password, user.password);
 
         if (match) {
-            res.send('Login successful');
+            req.session.user = { id: user.user_id, role: user.role };
+            return res.send(user.role);
         } else {
-            res.status(401).send('Invalid credentials');
+            res.status(401).send('Invalid credentials.');
         }
     });
 });
 
-// // Start the server
-// app.listen(8000, () => {
-//     console.log('Server running on port 8000');
-// });
-// Start the server
-const server = app.listen(3000, () => {
-    console.log(`Server running on port ${server.address().port}`);
+// Dashboard routes
+app.get('/admin-dashboard', (req, res) => {
+    if (req.session.user?.role === 'admin') {
+        res.sendFile(path.join(__dirname, 'public/admin-dashboard.html'));
+    } else {
+        res.status(403).send('Access denied.');
+    }
 });
-//test
+
+app.get('/staff-dashboard', (req, res) => {
+    if (req.session.user?.role === 'staff') {
+        res.sendFile(path.join(__dirname, 'public/staff-dashboard.html'));
+    } else {
+        res.status(403).send('Access denied.');
+    }
+});
+
+app.get('/client-dashboard', (req, res) => {
+    if (req.session.user?.role === 'client') {
+        res.sendFile(path.join(__dirname, 'public/client-dashboard.html'));
+    } else {
+        res.status(403).send('Access denied.');
+    }
+});
+
+// Default route: Redirect to login
+app.get('/', (req, res) => {
+    res.redirect('/login.html');
+});
+
+// Start the server
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
