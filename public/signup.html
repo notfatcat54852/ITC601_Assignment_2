@@ -26,10 +26,16 @@
             <input type="password" id="password" name="password" required>
 
             <button type="submit">Signup</button>
+            <button id="redirectButton" type="button">Login</button>
         </form>
     </div>
 
     <script>
+        document.getElementById('redirectButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/login.html';
+        });
+
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = {
