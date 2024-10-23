@@ -13,7 +13,7 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 250px;
-    background-color: #333; /* Dark background for sidebar */
+    background-color: #333;
     color: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -77,9 +77,9 @@ th {
     text-transform: uppercase;
 }
 
-tr:hover {
+/* tr:hover {
     background-color: #f1f1f1;
-}
+} */
 
 td:last-child {
     text-align: center;
@@ -91,37 +91,34 @@ button {
     padding: 10px 15px;
     font-size: 0.9rem;
     color: white;
+    background-color: #343a40;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-/* Delete Button */
 button.delete {
-    background-color: #212529; /* Dark gray, consistent with sidebar */
+    background-color: #6c757d;
 }
 
 button.delete:hover {
-    background-color: #1d2124; /* Slightly darker on hover */
+    background-color: #5a6268;
 }
 
-/* Edit Button */
 button.edit {
-    background-color: #343a40; /* Match sidebar’s theme */
+    background-color: #343a40;
 }
 
 button.edit:hover {
-    background-color: #23272b; /* Slightly darker on hover */
+    background-color: #23272b;
 }
 
-/* Submit Button (used in forms) */
 button[type="submit"] {
     width: 100%;
     background-color: #343a40;
     font-size: 1rem;
     padding: 12px;
-    margin-top: 10px;
 }
 
 button[type="submit"]:hover {
