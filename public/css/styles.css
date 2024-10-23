@@ -136,7 +136,7 @@ form {
 }
 
 form input, form select {
-    width: calc(100% - 20px); /* Ensure input fits within the form */
+    width: calc(100%); /* Ensure input fits within the form */
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
