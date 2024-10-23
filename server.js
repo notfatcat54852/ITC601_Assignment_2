@@ -236,6 +236,124 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// View all classes (for Manage Classes page)
+// View all classes (for Manage Classes page)
+app.get('/admin/manage-classes', (req, res) => {
+    const classesQuery = 'SELECT * FROM classes';
+    const instructorsQuery = 'SELECT user_id, CONCAT(first_name, " ", last_name) AS name FROM users WHERE role IN ("admin", "staff")';
+
+    // Run both queries in parallel
+    db.query(classesQuery, (err, classResults) => {
+        if (err) return res.status(500).send('Error retrieving classes.');
+
+        db.query(instructorsQuery, (err, instructorResults) => {
+            if (err) return res.status(500).send('Error retrieving instructors.');
+
+            let classesHtml = `
+                <h2>Manage Classes</h2>
+                <table border="1" width="100%" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Instructor</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Capacity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            classResults.forEach(classItem => {
+                classesHtml += `
+                    <tr>
+                        <td>${classItem.class_id}</td>
+                        <td>${classItem.class_name}</td>
+                        <td>${classItem.description}</td>
+                        <td>${classItem.instructor_id}</td>
+                        <td>${classItem.start_time}</td>
+                        <td>${classItem.end_time}</td>
+                        <td>${classItem.max_capacity}</td>
+                        <td>
+                            <button onclick="deleteClass(${classItem.class_id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            classesHtml += `
+                    </tbody>
+                </table>
+
+                <h3>Add New Class</h3>
+                <form id="addClassForm">
+                    <input type="text" id="class_name" placeholder="Class Name" required>
+                    <textarea id="description" placeholder="Description"></textarea>
+
+                    <select id="instructor_id" required>
+                        <option value="">Select Instructor</option>
+            `;
+
+            instructorResults.forEach(instructor => {
+                classesHtml += `<option value="${instructor.user_id}">${instructor.name}</option>`;
+            });
+
+            classesHtml += `
+                    </select>
+                    <input type="datetime-local" id="start_time" required>
+                    <input type="datetime-local" id="end_time" required>
+                    <input type="number" id="max_capacity" placeholder="Max Capacity" required>
+                    <button type="submit">Add Class</button>
+                </form>
+            `;
+
+            res.send(classesHtml);
+        });
+    });
+});
+
+
+// Add a new class
+app.post('/admin/add-class', (req, res) => {
+    const { class_name, description, instructor_id, start_time, end_time, max_capacity } = req.body;
+
+    // Validate input to ensure all fields are present
+    if (!class_name || !instructor_id || !start_time || !end_time || !max_capacity) {
+        return res.status(400).send('All fields are required.');
+    }
+
+    const query = `
+        INSERT INTO classes (class_name, description, instructor_id, start_time, end_time, max_capacity)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        query, 
+        [class_name, description, instructor_id, start_time, end_time, max_capacity], 
+        (err, result) => {
+            if (err) {
+                console.error('Error adding class:', err); // Log the error to the console for debugging
+                return res.status(500).send('Error adding class. Please check the inputs and try again.');
+            }
+            res.status(201).send('Class added successfully.');
+        }
+    );
+});
+
+
+// Delete a class
+app.delete('/admin/delete-class/:id', (req, res) => {
+    const classId = req.params.id;
+    const query = 'DELETE FROM classes WHERE class_id = ?';
+
+    db.query(query, [classId], (err) => {
+        if (err) return res.status(500).send('Error deleting class.');
+        res.status(200).send('Class deleted successfully.');
+    });
+});
 
 
 
