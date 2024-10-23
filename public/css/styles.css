@@ -1,4 +1,4 @@
-/* style.css */
+/* General Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -10,9 +10,10 @@ body {
     height: 100vh;
 }
 
+/* Sidebar Styles */
 .sidebar {
     width: 250px;
-    background-color: #333;
+    background-color: #333; /* Dark background for sidebar */
     color: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -21,27 +22,145 @@ body {
 .sidebar h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .sidebar a {
     display: block;
     color: white;
     text-decoration: none;
-    padding: 10px;
-    margin: 5px 0;
+    padding: 12px;
+    margin: 8px 0;
     border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .sidebar a:hover {
     background-color: #575757;
 }
 
+/* Content Area Styles */
 .content {
     flex: 1;
-    padding: 20px;
+    padding: 30px;
+    overflow-y: auto;
 }
 
-h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+h1, h2 {
+    margin-bottom: 15px;
+}
+
+/* Table Styles for Manage Users */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+thead {
+    background-color: #333;
+    color: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td:last-child {
+    text-align: center;
+}
+
+/* Button Styles */
+button {
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Delete Button */
+button.delete {
+    background-color: #212529; /* Dark gray, consistent with sidebar */
+}
+
+button.delete:hover {
+    background-color: #1d2124; /* Slightly darker on hover */
+}
+
+/* Edit Button */
+button.edit {
+    background-color: #343a40; /* Match sidebar’s theme */
+}
+
+button.edit:hover {
+    background-color: #23272b; /* Slightly darker on hover */
+}
+
+/* Submit Button (used in forms) */
+button[type="submit"] {
+    width: 100%;
+    background-color: #343a40;
+    font-size: 1rem;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background-color: #23272b;
+}
+
+/* Form Styles */
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 20px auto; /* Center forms horizontally */
+}
+
+form input, form select {
+    width: calc(100% - 20px); /* Ensure input fits within the form */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Include padding and borders in width */
+}
+
+/* Adjust padding for the buttons within forms */
+form button {
+    margin-top: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+    }
 }
