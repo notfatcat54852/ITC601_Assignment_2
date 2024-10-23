@@ -124,6 +124,7 @@ app.get('/admin/manage-users', (req, res) => {
                     <td>${user.role}</td>
                     <td>
                         <button onclick="deleteUser(${user.user_id})">Delete</button>
+                        <button onclick="editUser(${user.user_id})">Edit</button>
                     </td>
                 </tr>
             `;
@@ -132,6 +133,7 @@ app.get('/admin/manage-users', (req, res) => {
         usersHtml += `
                 </tbody>
             </table>
+            <div id="editUserFormContainer"></div>
             <h3>Add New User</h3>
             <form id="addUserForm">
                 <input type="text" id="first_name" placeholder="First Name" required>
@@ -145,47 +147,12 @@ app.get('/admin/manage-users', (req, res) => {
                 </select>
                 <button type="submit">Add User</button>
             </form>
-            <script>
-                document.getElementById('addUserForm').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const first_name = document.getElementById('first_name').value;
-                    const last_name = document.getElementById('last_name').value;
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
-                    const role = document.getElementById('role').value;
-
-                    const response = await fetch('/admin/add-user', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ first_name, last_name, email, password, role })
-                    });
-
-                    if (response.ok) {
-                        alert('User added successfully!');
-                        location.reload();
-                    } else {
-                        alert('Error adding user.');
-                    }
-                });
-
-                async function deleteUser(userId) {
-                    const confirmed = confirm('Are you sure you want to delete this user?');
-                    if (confirmed) {
-                        const response = await fetch('/admin/delete-user/' + userId, { method: 'DELETE' });
-                        if (response.ok) {
-                            alert('User deleted successfully!');
-                            location.reload();
-                        } else {
-                            alert('Error deleting user.');
-                        }
-                    }
-                }
-            </script>
         `;
 
         res.send(usersHtml);
     });
 });
+
 
 // Add a new user
 app.post('/admin/add-user', async (req, res) => {
@@ -230,7 +197,35 @@ app.delete('/admin/delete-user/:id', (req, res) => {
     });
 });
 
+app.get('/admin/get-user/:id', (req, res) => {
+    const userId = req.params.id;
+    const query = 'SELECT * FROM users WHERE user_id = ?';
 
+    db.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error retrieving user details.');
+        if (results.length === 0) return res.status(404).send('User not found.');
+        res.json(results[0]);
+    });
+});
+
+app.put('/admin/edit-user/:id', (req, res) => {
+    const userId = req.params.id;
+    const { first_name, last_name, email, role } = req.body;
+
+    // Check if all required fields are provided
+    if (!first_name || !last_name || !email || !role) {
+        return res.status(400).send('All fields are required.');
+    }
+
+    const query = 'UPDATE users SET first_name = ?, last_name = ?, email = ?, role = ? WHERE user_id = ?';
+    db.query(query, [first_name, last_name, email, role, userId], (err) => {
+        if (err) {
+            console.error('Error updating user:', err);
+            return res.status(500).send('Error updating user.');
+        }
+        res.send('User updated successfully.');
+    });
+});
 
 
 

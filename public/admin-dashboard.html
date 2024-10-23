@@ -95,6 +95,65 @@
                 }
             }
         }
+
+        //Edit user
+        async function editUser(userId) {
+    try {
+        const response = await fetch(`/admin/get-user/${userId}`);
+        if (!response.ok) {
+            throw new Error('Failed to load user details.');
+        }
+        const user = await response.json();
+
+        // Display the edit form with the user's current details
+        document.getElementById('editUserFormContainer').innerHTML = `
+            <h3>Edit User</h3>
+            <form id="editUserForm">
+                <input type="text" id="edit_first_name" value="${user.first_name}" required>
+                <input type="text" id="edit_last_name" value="${user.last_name}" required>
+                <input type="email" id="edit_email" value="${user.email}" required>
+                <select id="edit_role" required>
+                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="client" ${user.role === 'client' ? 'selected' : ''}>Client</option>
+                    <option value="staff" ${user.role === 'staff' ? 'selected' : ''}>Staff</option>
+                </select>
+                <button type="submit">Update User</button>
+            </form>
+        `;
+
+        // Attach the form submission event listener
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const first_name = document.getElementById('edit_first_name').value;
+            const last_name = document.getElementById('edit_last_name').value;
+            const email = document.getElementById('edit_email').value;
+            const role = document.getElementById('edit_role').value;
+
+            try {
+                const response = await fetch(`/admin/edit-user/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name, last_name, email, role })
+                });
+
+                const result = await response.text();
+                if (response.ok) {
+                    alert(result);
+                    document.getElementById('manageUsersLink').click(); // Reload users table
+                } else {
+                    alert(`Error: ${result}`);
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                alert('An unexpected error occurred.');
+            }
+        });
+    } catch (error) {
+        console.error('Error loading user:', error);
+    }
+}
+
     </script>
 </body>
 </html>
