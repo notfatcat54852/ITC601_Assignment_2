@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const db = require('./db');
 
 // Render Signup Page
 router.get('/signup', (req, res) => {
@@ -15,20 +13,23 @@ router.get('/signup', (req, res) => {
       <link rel="stylesheet" href="/styles.css">
     </head>
     <body>
-      <div class="content">
-        <h1>Signup</h1>
+      <div class="centered-container">
         <form method="POST" action="/signup">
-          <label>First Name: <input type="text" name="first_name" required></label><br>
-          <label>Last Name: <input type="text" name="last_name" required></label><br>
-          <label>Email: <input type="email" name="email" required></label><br>
-          <label>Password: <input type="password" name="password" required></label><br>
-          <label>Role: 
-            <select name="role" required>
-              <option value="client">Client</option>
-              <option value="staff">Staff</option>
-              <option value="admin">Admin</option>
-            </select>
-          </label><br>
+          <h1>Signup</h1>
+          <label>First Name:</label>
+          <input type="text" name="first_name" required>
+          <label>Last Name:</label>
+          <input type="text" name="last_name" required>
+          <label>Email:</label>
+          <input type="email" name="email" required>
+          <label>Password:</label>
+          <input type="password" name="password" required>
+          <label>Role:</label>
+          <select name="role" required>
+            <option value="client">Client</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
           <button type="submit">Signup</button>
         </form>
       </div>
@@ -36,24 +37,6 @@ router.get('/signup', (req, res) => {
     </html>
   `;
   res.send(html);
-});
-
-// Handle Signup Form Submission
-router.post('/signup', async (req, res) => {
-  const { first_name, last_name, email, password, role } = req.body;
-  
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const sql = `
-    INSERT INTO users (first_name, last_name, email, password, role)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-
-  db.query(sql, [first_name, last_name, email, hashedPassword, role], (err) => {
-    if (err) throw err;
-    res.redirect('/login');
-  });
 });
 
 module.exports = router;
