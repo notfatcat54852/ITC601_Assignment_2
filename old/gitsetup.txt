@@ -1,5 +1,0 @@
-git init
-git add .
-git commit -m "Initial commit with new hash script"
-git remote add origin https://github.com/notfatcat54852/ITC601_Assignment_2.git
-git push -u origin master
