@@ -1,0 +1,75 @@
+/* General styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+}
+
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    margin: 10px 0;
+    display: block;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #575757;
+    padding: 5px;
+}
+
+/* Content area */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #575757;
+}
