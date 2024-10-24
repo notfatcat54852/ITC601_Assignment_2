@@ -16,24 +16,34 @@ router.get('/users', (req, res) => {
     if (err) throw err;
 
     let html = `
-      <div class="sidebar">
-        <h2>Admin Dashboard</h2>
-        <a href="/users">Manage Users</a>
-        <a href="/classes">Manage Classes</a>
-        <a href="/home">Home</a>
-        <a href="/logout">Logout</a>
-      </div>
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage Users</title>
+        <link rel="stylesheet" href="/styles.css">
+      </head>
+      <body>
+        <div class="wrapper">
+          <div class="sidebar">
+            <h2>Admin Dashboard</h2>
+            <a href="/classes">Manage Classes</a>
+            <a href="/users">Manage Users</a>
 
-      <div class="content">
-        <h1>Manage Users</h1>
-        <form method="GET" action="/users">
-          <input type="text" name="search" placeholder="Search users" value="${search}">
-          <button type="submit">Search</button>
-        </form><br>
-        <a href="/add_user">Add New User</a>
+            <a href="/logout">Logout</a>
+          </div>
 
-        <table>
-          <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+          <div class="content">
+            <h1>Manage Users</h1>
+            <form method="GET" action="/users">
+              <input type="text" name="search" placeholder="Search users" value="${search}">
+              <button type="submit">Search</button>
+            </form><br>
+            <a href="/add_user">Add New User</a>
+
+            <table>
+              <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
     `;
 
     results.forEach(user => {
@@ -53,7 +63,7 @@ router.get('/users', (req, res) => {
       `;
     });
 
-    html += `</table></div>`;
+    html += `</table></div></div></body></html>`;
     res.send(html);
   });
 });

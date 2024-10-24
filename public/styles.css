@@ -1,17 +1,23 @@
 /* General styles */
-body {
+body, html {
     margin: 0;
+    padding: 0;
+    height: 100%;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
+}
+
+/* Wrapper to contain sidebar and content */
+.wrapper {
+    display: flex;
+    height: 100vh;
 }
 
 /* Sidebar styling */
 .sidebar {
     width: 250px;
-    height: 100vh;
     background-color: #333;
     color: #fff;
-    position: fixed;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -19,25 +25,27 @@ body {
 
 .sidebar h2 {
     margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .sidebar a {
     color: #fff;
     text-decoration: none;
     margin: 10px 0;
-    display: block;
     font-size: 18px;
+    padding: 10px;
+    transition: background-color 0.3s;
 }
 
 .sidebar a:hover {
     background-color: #575757;
-    padding: 5px;
 }
 
 /* Content area */
 .content {
-    margin-left: 250px;
+    flex: 1;
     padding: 20px;
+    overflow-y: auto;
 }
 
 /* Table styling */
@@ -68,6 +76,7 @@ button {
     border: none;
     padding: 8px 12px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {

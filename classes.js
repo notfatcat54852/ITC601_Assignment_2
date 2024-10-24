@@ -24,27 +24,37 @@ router.get('/classes', (req, res) => {
     if (err) throw err;
 
     let html = `
-      <div class="sidebar">
-        <h2>Admin Dashboard</h2>
-        <a href="/users">Manage Users</a>
-        <a href="/classes">Manage Classes</a>
-        <a href="/home">Home</a>
-        <a href="/logout">Logout</a>
-      </div>
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage Classes</title>
+        <link rel="stylesheet" href="/styles.css">
+      </head>
+      <body>
+        <div class="wrapper">
+          <div class="sidebar">
+            <h2>Admin Dashboard</h2>
+            <a href="/classes">Manage Classes</a>
+            <a href="/users">Manage Users</a>
 
-      <div class="content">
-        <h1>Manage Classes</h1>
-        <form method="GET" action="/classes">
-          <label>Start Date: <input type="date" name="start_date" value="${start_date}"></label>
-          <label>End Date: <input type="date" name="end_date" value="${end_date}"></label>
-          <button type="submit">Filter</button>
-        </form><br>
-        <a href="/add_class">Add New Class</a>
+            <a href="/logout">Logout</a>
+          </div>
 
-        <table>
-          <tr>
-            <th>ID</th><th>Name</th><th>Instructor</th><th>Start</th><th>End</th><th>Bookings</th><th>Actions</th>
-          </tr>
+          <div class="content">
+            <h1>Manage Classes</h1>
+            <form method="GET" action="/classes">
+              <label>Start Date: <input type="date" name="start_date" value="${start_date}"></label>
+              <label>End Date: <input type="date" name="end_date" value="${end_date}"></label>
+              <button type="submit">Filter</button>
+            </form><br>
+            <a href="/add_class">Add New Class</a>
+
+            <table>
+              <tr>
+                <th>ID</th><th>Name</th><th>Instructor</th><th>Start</th><th>End</th><th>Bookings</th><th>Actions</th>
+              </tr>
     `;
 
     results.forEach(cls => {
@@ -67,8 +77,17 @@ router.get('/classes', (req, res) => {
       `;
     });
 
-    html += `</table></div>`;
+    html += `</table></div></div></body></html>`;
     res.send(html);
+  });
+});
+
+// Delete Class Logic
+router.post('/delete_class/:id', (req, res) => {
+  const sql = 'DELETE FROM classes WHERE class_id = ?';
+  db.query(sql, [req.params.id], (err) => {
+    if (err) throw err;
+    res.redirect('/classes');
   });
 });
 
@@ -86,7 +105,11 @@ router.get('/view_bookings/:class_id', (req, res) => {
   db.query(sql, [class_id], (err, results) => {
     if (err) throw err;
 
-    let html = `<h1>Bookings for Class ID: ${class_id}</h1><a href="/classes">Back to Classes</a><br><br>`;
+    let html = `
+      <h1>Bookings for Class ID: ${class_id}</h1>
+      <a href="/classes">Back to Classes</a><br><br>
+    `;
+
     if (results.length > 0) {
       html += '<ul>';
       results.forEach(user => {
@@ -94,19 +117,10 @@ router.get('/view_bookings/:class_id', (req, res) => {
       });
       html += '</ul>';
     } else {
-      html += `<p>No bookings found for this class.</p>`;
+      html += '<p>No bookings found for this class.</p>';
     }
 
     res.send(html);
-  });
-});
-
-// Delete Class Logic
-router.post('/delete_class/:id', (req, res) => {
-  const sql = 'DELETE FROM classes WHERE class_id = ?';
-  db.query(sql, [req.params.id], (err) => {
-    if (err) throw err;
-    res.redirect('/classes');
   });
 });
 
